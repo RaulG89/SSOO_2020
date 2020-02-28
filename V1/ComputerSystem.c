@@ -8,6 +8,7 @@
 #include "Asserts.h"
 
 // Functions prototypes
+void ComputerSystem_PrintProgramList();
 
 // Array that contains basic data about all daemons
 // and all user programs specified in the command line
@@ -27,6 +28,9 @@ void ComputerSystem_PowerOn(int argc, char *argv[], int paramIndex) {
 		exit(2);
 	}
 	nm=Messages_Load_Messages(nm,STUDENT_MESSAGES_FILE);
+
+	// V1 Ejercicio 2
+	ComputerSystem_PrintProgramList();
 
 	// Prepare if necesary the assert system
 	Asserts_LoadAsserts();
@@ -49,3 +53,21 @@ void ComputerSystem_PowerOff() {
 
 /////////////////////////////////////////////////////////
 //  New functions below this line  //////////////////////
+
+// V1 Ejercicio 1
+void ComputerSystem_PrintProgramList()
+{
+	ComputerSystem_DebugMessage(101, INIT);
+	int i;
+	for (i = 0; i < PROGRAMSMAXNUMBER; i++)
+	{
+		if (programList[i] != NULL)
+		{
+			// -> = Acceso a puntero; el struct esta dentro de un puntero
+			ComputerSystem_DebugMessage(102, INIT,
+										programList[i]->executableName,
+										programList[i]->arrivalTime);
+		}
+	}
+}
+

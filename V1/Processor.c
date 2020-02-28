@@ -194,6 +194,19 @@ void Processor_DecodeAndExecuteInstruction() {
 			registerPC_CPU++;
 			break;
 
+		// Instruction MEMADD
+		case MEMADD_INST:
+			registerMAR_CPU = operand2;
+			// Send to the MMU controller the address in which the reading has to take place: use the address bus for this
+			Buses_write_AddressBus_From_To(CPU, MMU);
+			// Tell the MMU controller to read
+			registerCTRL_CPU=CTRLREAD;
+			Buses_write_ControlBus_From_To(CPU, MMU);
+			// Copy the read data to the accumulator register and makes sum with te operand1
+			registerAccumulator_CPU = registerMBR_CPU.cell + operand1;
+			registerPC_CPU++;
+			break;
+
 		// Instruction HALT
 		case HALT_INST: 
 			Processor_ActivatePSW_Bit(POWEROFF_BIT);
@@ -210,20 +223,6 @@ void Processor_DecodeAndExecuteInstruction() {
 			// Update PSW bits (ZERO_BIT, NEGATIVE_BIT, ...)
 			Processor_UpdatePSW();
 			return; // Note: message show before... for operating system messages after...
-
-		// Instruction MEMADD
-		case MEMADD_INST:
-			// Tell the main memory controller from where
-			registerMAR_CPU=operand2;
-			// Send to the main memory controller the address in which the reading has to take place: use the address bus for this
-			Buses_write_AddressBus_From_To(CPU, MMU);
-			// Tell the MMU controller to read
-			registerCTRL_CPU=CTRLREAD;
-			Buses_write_ControlBus_From_To(CPU,MMU);
-			// Copy the read data to the accumulator register
-			registerAccumulator_CPU= registerMBR_CPU.cell + operand1;
-			registerPC_CPU++;
-			break;
 
 		// Instruction IRET
 		case IRET_INST: // Return from a interrupt handle manager call
